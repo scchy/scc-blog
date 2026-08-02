@@ -12,15 +12,19 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import matter from 'gray-matter';
 
-const JUEJIN_COOKIE = process.env.JUEJIN_COOKIE;
+const JUEJIN_COOKIE = (process.env.JUEJIN_COOKIE || '').trim().replace(/\s+/g, ' ');
 if (!JUEJIN_COOKIE) {
     console.error('❌ 缺少 JUEJIN_COOKIE 环境变量');
     process.exit(1);
 }
 
 const JUEJIN_AID = process.env.JUEJIN_AID || '2608';
-const JUEJIN_UUID = process.env.JUEJIN_UUID || '';
+const JUEJIN_UUID = (process.env.JUEJIN_UUID || '').trim();
 const JUEJIN_CSRF_TOKEN = process.env.JUEJIN_CSRF_TOKEN || '';
+
+if (process.env.DEBUG) {
+    console.log(`🔍 DEBUG: cookie长度=${JUEJIN_COOKIE.length}, uuid='${JUEJIN_UUID}', aid='${JUEJIN_AID}'`);
+}
 
 const BLOG_DIR = join(process.cwd(), 'src', 'content', 'blog');
 

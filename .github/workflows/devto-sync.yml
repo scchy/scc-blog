@@ -40,4 +40,5 @@ jobs:
           JUEJIN_COOKIE: ${{ secrets.JUEJIN_COOKIE }}
           JUEJIN_UUID: ${{ secrets.JUEJIN_UUID }}
           JUEJIN_CSRF_TOKEN: ${{ secrets.JUEJIN_CSRF_TOKEN }}
+          DEBUG: 'true'
         run: node scripts/juejin-sync.mjs
