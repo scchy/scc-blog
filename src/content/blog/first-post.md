@@ -4,7 +4,7 @@ description: '记录从零开始搭建这个博客的过程，以及双轨内容
 pubDate: 2026-08-01
 heroImage: '/scc-blog/blog-placeholder-1.jpg'
 tags: ['astro', 'blog', 'meta']
-canonical_url: https://scc.github.io/scc-blog/blog/first-post/
+canonical_url: https://scchy.github.io/scc-blog/blog/first-post/
 ---
 
 ## 为什么开始写博客

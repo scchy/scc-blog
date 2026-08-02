@@ -17,7 +17,7 @@ npm run dev
 
 ## 部署
 
-- 站点地址：https://scc.github.io/scc-blog/
+- 站点地址：https://scchy.github.io/scc-blog/
 - 工作流：`.github/workflows/deploy.yml`
 
 ## 内容分发

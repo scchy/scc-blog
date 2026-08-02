@@ -3,7 +3,7 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://scc.github.io',
+  site: 'https://scchy.github.io',
   base: '/scc-blog',
   integrations: [mdx()],
 });
