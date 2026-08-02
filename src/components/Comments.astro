@@ -12,10 +12,12 @@ interface Props {
 
 const { repo, repoId, category, categoryId } = Astro.props;
 
-const GISCUS_REPO = repo || import.meta.env.PUBLIC_GISCUS_REPO || '';
-const GISCUS_REPO_ID = repoId || import.meta.env.PUBLIC_GISCUS_REPO_ID || '';
+// Giscus 配置：默认值硬编码（这些值不敏感，非密钥），可用 props 或环境变量覆盖。
+// 之所以不依赖 .env：GitHub Actions 构建环境不含本地 .env 文件，硬编码可保证 CI 与本地一致。
+const GISCUS_REPO = repo || import.meta.env.PUBLIC_GISCUS_REPO || 'scchy/scc-blog';
+const GISCUS_REPO_ID = repoId || import.meta.env.PUBLIC_GISCUS_REPO_ID || 'R_kgDOTqoA4A';
 const GISCUS_CATEGORY = category || import.meta.env.PUBLIC_GISCUS_CATEGORY || 'Announcements';
-const GISCUS_CATEGORY_ID = categoryId || import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '';
+const GISCUS_CATEGORY_ID = categoryId || import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDOTqoA4M4DChbE';
 ---
 
 {
@@ -40,8 +42,8 @@ const GISCUS_CATEGORY_ID = categoryId || import.meta.env.PUBLIC_GISCUS_CATEGORY_
         const container = document.getElementById('giscus-comments');
         if (!container || container.hasChildNodes()) return;
 
-        const repo = import.meta.env.PUBLIC_GISCUS_REPO || '';
-        const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID || '';
+        const repo = import.meta.env.PUBLIC_GISCUS_REPO || 'scchy/scc-blog';
+        const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID || 'R_kgDOTqoA4A';
         if (!repo || !repoId) return;
 
         const isDark = document.documentElement.classList.contains('dark');
@@ -50,7 +52,7 @@ const GISCUS_CATEGORY_ID = categoryId || import.meta.env.PUBLIC_GISCUS_CATEGORY_
         giscus.setAttribute('data-repo', repo);
         giscus.setAttribute('data-repo-id', repoId);
         giscus.setAttribute('data-category', import.meta.env.PUBLIC_GISCUS_CATEGORY || 'Announcements');
-        giscus.setAttribute('data-category-id', import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '');
+        giscus.setAttribute('data-category-id', import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDOTqoA4M4DChbE');
         giscus.setAttribute('data-mapping', 'pathname');
         giscus.setAttribute('data-strict', '0');
         giscus.setAttribute('data-reactions-enabled', '1');
