@@ -89,6 +89,7 @@ async function main() {
 
         // 是否直接发布：DEV_PUBLISH=1 直接发布，否则存为草稿（默认直接发布）
         const publish = (process.env.DEV_PUBLISH || '1') !== '0';
+        const canonicalUrl = `${SITE_BASE}/blog/${slug}/`;
         const article = {
             title: data.title,
             published: publish,
@@ -98,7 +99,6 @@ async function main() {
             canonical_url: canonicalUrl
         };
 
-        const canonicalUrl = `${SITE_BASE}/blog/${slug}/`;
         // 匹配已存在的文章（按 canonical_url，Dev.to 的 slug 是自动生成的不可靠）
         const existing = existingArticles.find((a) => a.canonical_url === canonicalUrl);
         if (existing) {
