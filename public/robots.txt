@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://scchy.github.io/scc-blog/sitemap-index.xml
