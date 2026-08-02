@@ -69,7 +69,7 @@ Astro 的几个特性特别适合博客：
 └─────────────────┘              └─────────────────────┘                     └─────────────────┘
 ```
 
-**技术栈**：Astro + Node.js 20 + GitHub Actions + GitHub Pages
+**技术栈**：Astro + Node.js 22 + GitHub Actions + GitHub Pages
 
 | 组件 | 职责 |
 |------|------|
@@ -116,11 +116,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
       - run: npm ci
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
 
@@ -213,12 +213,22 @@ git push origin main
 - `src/pages/rss.xml.js`：生成 RSS 订阅源
 - `BaseHead.astro`：修复 OG 图片 URL，增加 RSS 自动发现
 
+## 博客演进与现状
+
+搭建完成后，博客又经历了多次迭代，当前功能包括：
+
+- **Dante 主题**：从默认 blog 模板迁移到 Dante 主题，博客 + 作品集二合一，支持暗色模式、View Transitions 页面过渡
+- **5 大主题分类**：强化学习、LLM + Agent、机器学习与深度学习、亲子成长、经验分享
+- **阅读时间 & 文章目录（TOC）**：自动估算阅读时长，生成可跳转的章节目录
+- **RSS & Sitemap**：自动生成 RSS 订阅源和站点地图
+- **Google Search Console 接入**：已验证域名并提交 sitemap，可监控收录情况
+- **SEO 优化**：Open Graph、Twitter Card、canonical URL、robots.txt
+
 ## 下一步计划
 
 1. 持续写作，每周至少一篇
 2. 同步到 Dev.to 和掘金，并加上 canonical URL
-3. 增加标签页、阅读时间、文章目录（TOC）
-4. 接入 Google Search Console 监控索引
-5. 考虑绑定自定义域名和接入评论系统
+3. 补充作品集真实项目
+4. 考虑绑定自定义域名和接入评论系统
 
 这个博客会记录我在技术、产品和个人成长方面的思考，欢迎常来看看。
