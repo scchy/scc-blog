@@ -1,10 +1,18 @@
 ---
-title: '第一篇：用 Astro 搭建个人开发者博客（完整过程）'
-description: '从零开始用 Astro + GitHub Pages 搭建自托管开发者博客的完整过程：方案选型、架构设计、五步搭建、双轨内容策略，以及实际踩坑记录。'
-pubDate: 2026-08-01
-heroImage: '/scc-blog/blog-placeholder-1.jpg'
-tags: ['astro', 'blog', 'github-pages', 'seo', 'workflow']
-canonical_url: https://scchy.github.io/scc-blog/blog/first-post/
+title: 第一篇：用 Astro 搭建个人开发者博客（完整过程）
+excerpt: 从零开始用 Astro + GitHub Pages 搭建自托管开发者博客的完整过程：方案选型、架构设计、五步搭建、双轨内容策略，以及实际踩坑记录。
+publishDate: 2026-08-01
+isFeatured: true
+tags:
+  - Astro
+  - GitHub Pages
+  - SEO
+  - 博客
+  - 工作流
+seo:
+  title: 用 Astro 搭建个人开发者博客（完整过程）
+  description: 从零开始用 Astro + GitHub Pages 搭建自托管开发者博客的完整过程：方案选型、架构设计、五步搭建、双轨内容策略，以及实际踩坑记录。
+  pageType: article
 ---
 
 ## 为什么开始写博客
