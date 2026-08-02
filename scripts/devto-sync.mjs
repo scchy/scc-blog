@@ -45,17 +45,26 @@ async function api(path, options = {}) {
     return res.json();
 }
 
-// 获取用户所有文章（含未发布）
+// 获取用户所有文章（已发布 + 未发布）
 async function getUserArticles() {
     const articles = [];
-    let page = 1;
-    while (true) {
-        const batch = await api(`/articles/me/unpublished?per_page=100&page=${page}`);
-        if (batch.length === 0) break;
-        articles.push(...batch);
-        page++;
+    for (const ep of ['/articles/me', '/articles/me/unpublished']) {
+        let page = 1;
+        while (true) {
+            const batch = await api(`${ep}?per_page=100&page=${page}`);
+            if (batch.length === 0) break;
+            articles.push(...batch);
+            page++;
+        }
     }
-    return articles;
+    // 按 canonical_url 去重（同一文章可能同时出现在两个列表）
+    const seen = new Set();
+    return articles.filter((a) => {
+        const key = a.canonical_url || a.id;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 }
 
 async function main() {
@@ -86,11 +95,12 @@ async function main() {
             description: data.excerpt || data.description || '',
             body_markdown: content.trim(),
             tags,
-            canonical_url: `${SITE_BASE}/blog/${slug}/`
+            canonical_url: canonicalUrl
         };
 
-        // 匹配已存在的文章（按 slug）
-        const existing = existingArticles.find((a) => a.slug === slug);
+        const canonicalUrl = `${SITE_BASE}/blog/${slug}/`;
+        // 匹配已存在的文章（按 canonical_url，Dev.to 的 slug 是自动生成的不可靠）
+        const existing = existingArticles.find((a) => a.canonical_url === canonicalUrl);
         if (existing) {
             console.log(`🔄 更新: ${data.title}`);
             await api(`/articles/${existing.id}`, {
