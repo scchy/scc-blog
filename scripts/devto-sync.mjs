@@ -70,7 +70,11 @@ async function main() {
         const { data, content } = matter(raw);
         // 用文件名作为 slug（与博客 URL 一致）
         const slug = data.slug || file.replace(/\.md$/, '');
-        const tags = (data.tags || []).map((t) => t.toLowerCase()).slice(0, 4);
+        // Dev.to tag 规则：只能小写字母/数字/连字符，空格换连字符
+        const tags = (data.tags || [])
+            .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''))
+            .filter((t) => t && t.length <= 30)
+            .slice(0, 4);
 
         const article = {
             title: data.title,
