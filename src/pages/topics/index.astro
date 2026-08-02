@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import ArrowRight from '../../assets/icons/arrow-right.svg';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { topics, type Topic } from '../../data/topics';
+
+const posts = await getCollection('blog');
+
+function countForTopic(topic: Topic): number {
+    const tags = topic.tags.map((t) => t.toLowerCase());
+    return posts.filter((post) => {
+        const postTags = (post.data.tags || []).map((t: string) => t.toLowerCase());
+        return postTags.some((t: string) => tags.includes(t));
+    }).length;
+}
+---
+
+<BaseLayout
+    title="主题"
+    description="按四大主题浏览博客内容：强化学习、LLM + Agent、机器学习与深度学习、亲子成长。"
+    showHeader={false}
+>
+    <h1 class="mb-12 font-serif text-2xl leading-tight italic sm:mb-16 sm:text-4xl">内容主题</h1>
+    <p class="mb-12 text-sm leading-relaxed sm:text-base">
+        博客内容围绕四大主题展开，方便你按兴趣方向浏览。
+    </p>
+    <div class="space-y-10">
+        {topics.map((topic) => {
+            const count = countForTopic(topic);
+            return (
+                <a
+                    class="group flex items-start justify-between gap-8 border-b border-dashed pb-8"
+                    href={`/scc-blog/blog/?topic=${topic.slug}`}
+                >
+                    <div class="grow">
+                        <h2 class="font-serif text-xl leading-tight font-medium group-hover:underline group-hover:decoration-dashed group-hover:decoration-1 group-hover:underline-offset-4 sm:text-2xl">
+                            {topic.title}
+                        </h2>
+                        <p class="mt-1 text-sm leading-normal">{topic.subtitle}</p>
+                        <p class="mt-3 text-sm leading-relaxed text-muted">{topic.description}</p>
+                        <div class="mt-2 text-xs">
+                            {count} 篇文章
+                        </div>
+                    </div>
+                    <div class="hidden font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex sm:shrink-0 sm:items-center sm:gap-1">
+                        查看 <ArrowRight class="h-4 w-4 fill-current" />
+                    </div>
+                </a>
+            );
+        })}
+    </div>
+</BaseLayout>

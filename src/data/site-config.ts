@@ -29,6 +29,10 @@ const siteConfig: SiteConfig = {
             href: '/scc-blog/blog'
         },
         {
+            text: '主题',
+            href: '/scc-blog/topics'
+        },
+        {
             text: '标签',
             href: '/scc-blog/tags'
         }
