@@ -6,7 +6,7 @@ const siteConfig: SiteConfig = {
     website: 'https://scchy.github.io',
     avatar: {
         src: avatar,
-        alt: 'SCC'
+        alt: 'SCC 的头像'
     },
     title: 'SCC 的博客',
     subtitle: '记录技术、思考与成长的开发者博客',
