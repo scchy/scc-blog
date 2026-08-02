@@ -78,9 +78,11 @@ async function main() {
         // Dev.to 至少需要 1 个 tag，没有则用默认
         if (tags.length === 0) tags.push('devto');
 
+        // 是否直接发布：DEV_PUBLISH=1 直接发布，否则存为草稿（默认直接发布）
+        const publish = (process.env.DEV_PUBLISH || '1') !== '0';
         const article = {
             title: data.title,
-            published: false,
+            published: publish,
             description: data.excerpt || data.description || '',
             body_markdown: content.trim(),
             tags,
