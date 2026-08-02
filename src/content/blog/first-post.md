@@ -1,21 +1,215 @@
 ---
-title: '第一篇：用 Astro 搭建个人博客'
-description: '记录从零开始搭建这个博客的过程，以及双轨内容策略的思考。'
+title: '第一篇：用 Astro 搭建个人开发者博客（完整过程）'
+description: '从零开始用 Astro + GitHub Pages 搭建自托管开发者博客的完整过程：方案选型、架构设计、五步搭建、双轨内容策略，以及实际踩坑记录。'
 pubDate: 2026-08-01
 heroImage: '/scc-blog/blog-placeholder-1.jpg'
-tags: ['astro', 'blog', 'meta']
+tags: ['astro', 'blog', 'github-pages', 'seo', 'workflow']
 canonical_url: https://scchy.github.io/scc-blog/blog/first-post/
 ---
 
 ## 为什么开始写博客
 
-作为一个开发者，沉淀和输出是最好的学习方式。这个博客基于 Astro + GitHub Pages 搭建，内容所有权完全在我自己手中。
+作为一个开发者，**沉淀和输出是最好的学习方式**。但写在哪、怎么沉淀，决定了内容的价值能否长期积累。
 
-## 双轨策略
+对比了公众号、知乎、掘金等平台后，我最终选择了**自托管博客作为主阵地**。核心原因有三个：
 
-- **主阵地**：Astro 自托管博客，沉淀 SEO 与长期内容
-- **分发渠道**：Dev.to、掘金等社区平台，获取即时反馈和流量
+1. **内容所有权完全在自己手中**：不会被平台算法、封禁、改版或商业化影响
+2. **SEO 长期积累**：有价值的内容可以持续从搜索引擎获得自然流量
+3. **零服务器成本**：GitHub Pages 免费托管，配合 Astro 生成纯静态站点
 
-## 下一步
+## 双轨内容策略
 
-持续写作，每周至少一篇，同步到社区平台并加上 canonical URL。
+这是我搭建这个博客的核心方法论——**"自托管主阵地 + 社区分发"**的双轨模式：
+
+| 轨道 | 平台 | 定位 | 优势 |
+|------|------|------|------|
+| **主阵地** | 本站（Astro） | 沉淀 SEO 与长期内容 | 内容所有权、SEO 积累、可迁移 |
+| **分发渠道** | Dev.to、掘金 | 获取即时反馈和流量 | 社区曝光、快速互动、冷启动 |
+
+**关键原则：canonical URL**
+
+所有分发到社区的文章，都必须通过 `canonical_url` 指向本站原文，避免搜索引擎判定为重复内容。这样：
+- 社区平台带来即时流量
+- 搜索引擎的权重最终归集到本站
+- 即使平台变动，内容资产不丢
+
+## 方案选型：为什么选 Astro
+
+对比了几种主流的静态站点方案：
+
+| 方案 | 优点 | 缺点 | 适用场景 |
+|------|------|------|----------|
+| **Astro** | 零 JS 默认、Islands 架构、性能极致、MDX 原生 | 生态相对新 | **内容型站点（博客）** |
+| Next.js | 功能强大、React 生态 | 较重、构建慢 | 复杂应用 |
+| Hexo / Jekyll | 主题多、生态成熟 | 灵活性一般 | 传统博客 |
+| Hugo | 构建极快 | Go 模板学习曲线 | 大型文档 |
+
+Astro 的几个特性特别适合博客：
+
+- **零 JS 默认**：页面默认不加载 JavaScript，首屏极快
+- **Islands 架构**：只在需要交互的地方按需加载 JS
+- **Markdown / MDX 原生支持**：写文章就是写 Markdown
+- **内容集合（Content Collections）**：内置类型安全的内容管理
+
+## 架构设计
+
+```
+┌─────────────────┐   git push   ┌─────────────────────┐   build & deploy   ┌─────────────────┐
+│  本地 Markdown  │ ────────────► │  GitHub Repository  │ ──────────────────► │  GitHub Pages   │
+│  (src/content)  │              │  (scc-blog)         │                     │  (静态站点)      │
+└─────────────────┘              └─────────────────────┘                     └─────────────────┘
+```
+
+**技术栈**：Astro + Node.js 20 + GitHub Actions + GitHub Pages
+
+| 组件 | 职责 |
+|------|------|
+| `src/content/blog/` | Markdown 文章存放 |
+| `astro.config.mjs` | Astro 配置（site、base、集成） |
+| `.github/workflows/deploy.yml` | GitHub Actions 自动构建部署 |
+| `public/` | 静态资源（favicon、robots.txt 等） |
+| `dist/` | 构建输出目录 |
+
+## 完整搭建过程
+
+### 第 1 步：初始化 Astro 项目
+
+```bash
+cd /home/scc/sccWork/devData/sccDisk/openClaw/gitProj
+npm create astro@latest scc-blog -- --template blog --no-install
+cd scc-blog
+npm install
+```
+
+这步会生成 Astro 官方 blog 模板，包含首页、文章列表、文章详情页、BaseHead 组件等基础结构。
+
+### 第 2 步：配置 GitHub Pages 部署
+
+创建 `.github/workflows/deploy.yml`：
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+```
+
+配置 `astro.config.mjs` 适配 GitHub Pages 子路径：
+
+```javascript
+export default defineConfig({
+  site: 'https://scchy.github.io',
+  base: '/scc-blog',
+  integrations: [mdx(), sitemap()],
+});
+```
+
+**注意点**：
+- `site` 是 GitHub Pages 域名
+- `base` 必须是仓库名，因为项目页地址是 `https://scchy.github.io/scc-blog/`
+
+### 第 3 步：本地化内容与站点信息
+
+把默认英文模板改成中文：
+
+```typescript
+// src/consts.ts
+export const SITE_TITLE = 'SCC 的博客';
+export const SITE_DESCRIPTION = '记录技术、思考与成长的开发者博客';
+```
+
+把首页 `lang` 改为 `zh-CN`，Hero 文案改为中文，文章 frontmatter 增加 `canonical_url` 字段。
+
+### 第 4 步：添加 README 与写作流程
+
+README 记录了本地开发、写作流程、部署地址和内容分发策略，方便后续维护和（可能的）协作。
+
+### 第 5 步：连接远程仓库并推送
+
+```bash
+git remote add origin https://github.com/scchy/scc-blog.git
+git push origin main
+```
+
+推送到 `main` 分支后，GitHub Actions 自动触发构建和部署。
+
+## 数据流
+
+1. 作者在 `src/content/blog/` 下新建 Markdown 文件
+2. 填写 Frontmatter（title、description、pubDate、tags、canonical_url）
+3. `git commit` + `git push` 到 main 分支
+4. GitHub Actions 触发：checkout → setup-node → npm ci → build → deploy-pages
+5. GitHub Pages 提供 `dist/` 目录的静态文件
+
+## 实际踩坑记录
+
+### 1. GitHub 用户名不一致
+
+最初配置用的 `scc.github.io`，但实际 GitHub 账号是 `scchy`。导致：
+- `astro.config.mjs` 的 `site` 和 `base` 需要修正为 `scchy.github.io`
+- `README` 和文章的 `canonical_url` 都要同步改
+- git remote 也要改成 `github.com/scchy/scc-blog.git`
+
+**教训**：搭建前先确认 GitHub 用户名，所有 URL 用占位符统一管理，避免散落各处。
+
+### 2. GitHub Pages 404
+
+第一次访问 `https://scchy.github.io/scc-blog/` 返回 404，原因排查：
+- GitHub Actions workflow 可能失败
+- Pages 的 **Source 必须是 `GitHub Actions`**，不能选 `Deploy from a branch`
+- 首次部署有延迟，需要等 5-10 分钟
+
+### 3. push 网络不稳定
+
+本地 `git commit` 成功，但 `git push` 多次因网络抖动失败。解决：
+- 用带 token 的 remote URL 重试多次
+- push 成功后立即把 remote 重置为干净地址（不带 token）
+
+### 4. SEO 细节补充
+
+搭建完成后补充了 SEO 相关文件：
+- `public/robots.txt`：允许搜索引擎抓取，声明 sitemap
+- `src/pages/rss.xml.js`：生成 RSS 订阅源
+- `BaseHead.astro`：修复 OG 图片 URL，增加 RSS 自动发现
+
+## 下一步计划
+
+1. 持续写作，每周至少一篇
+2. 同步到 Dev.to 和掘金，并加上 canonical URL
+3. 增加标签页、阅读时间、文章目录（TOC）
+4. 接入 Google Search Console 监控索引
+5. 考虑绑定自定义域名和接入评论系统
+
+这个博客会记录我在技术、产品和个人成长方面的思考，欢迎常来看看。
