@@ -4,6 +4,7 @@ excerpt: 从零开始用 Astro + GitHub Pages 搭建自托管开发者博客的�
 publishDate: 2026-08-01
 isFeatured: true
 tags:
+  - 经验分享
   - Astro
   - GitHub Pages
   - SEO

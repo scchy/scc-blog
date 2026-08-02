@@ -34,5 +34,12 @@ export const topics: Topic[] = [
         subtitle: 'Parenting & Family',
         description: '亲子英语学习、儿童教育游戏、家庭教育方法、高质量陪伴与成长记录。',
         tags: ['亲子', '英语学习', '教育', '游戏', '家庭']
+    },
+    {
+        slug: 'experience',
+        title: '经验分享',
+        subtitle: 'Experience & Insights',
+        description: '个人成长、学习工作方法、工具使用与项目实战的经验总结与复盘。',
+        tags: ['经验分享', '博客', 'Astro', 'GitHub Pages', 'SEO', '工作流', '复盘', '工具']
     }
 ];
