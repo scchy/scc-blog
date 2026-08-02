@@ -70,11 +70,13 @@ async function main() {
         const { data, content } = matter(raw);
         // 用文件名作为 slug（与博客 URL 一致）
         const slug = data.slug || file.replace(/\.md$/, '');
-        // Dev.to tag 规则：只能小写字母/数字/连字符，空格换连字符
+        // Dev.to tag 规则：只能纯小写字母/数字（a-z0-9），去掉空格、连字符等所有特殊字符
         const tags = (data.tags || [])
-            .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''))
-            .filter((t) => t && t.length <= 30)
+            .map((t) => t.toLowerCase().replace(/[^a-z0-9]/g, ''))
+            .filter((t) => t.length >= 2 && t.length <= 30)
             .slice(0, 4);
+        // Dev.to 至少需要 1 个 tag，没有则用默认
+        if (tags.length === 0) tags.push('devto');
 
         const article = {
             title: data.title,
