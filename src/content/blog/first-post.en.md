@@ -223,6 +223,7 @@ After the initial build, the blog went through several more iterations. Current 
 - **Google Search Console**: verified the domain and submitted the sitemap, with indexing monitoring
 - **SEO optimization**: Open Graph, Twitter Card, canonical URL, robots.txt
 - **Multi-platform distribution (bilingual)**: every post is maintained in both Chinese and English, auto-synced via GitHub Actions — Chinese goes to this site + Juejin (as draft), English goes to Dev.to (published directly), all with canonical URLs pointing back here to avoid SEO duplication
+- **Comments (Giscus)**: a lightweight comment system built on GitHub Discussions — free, no ads, Chinese-friendly, and you own the comment data
 
 ## Multi-Platform Distribution Architecture
 
@@ -258,11 +259,28 @@ Content follows the **"self-hosted home base + community distribution"** dual-tr
 - Use `curl` instead of Node `fetch` for cookie-bearing requests — `fetch` handles cookies with special characters unreliably
 - Juejin's draft-list endpoint is unavailable, so matching is done against **published articles**: update if published, otherwise create a new draft
 
+## Comments (Giscus)
+
+The **Giscus** comment system at the bottom of each post was chosen after comparing several options:
+
+| Option | Data Ownership | Ads | Cost | Chinese Support |
+|--------|---------------|-----|------|-----------------|
+| **Giscus** | Yours (GitHub Discussions) | No | Free | ✅ |
+| utterances | Yours (GitHub Issues) | No | Free | Basic |
+| Waline/Twikoo | Third-party backend | No | Needs backend | ✅ |
+| Disqus | Third-party | Yes | Free/Paid | Basic |
+
+**Why Giscus**:
+- Comment data lives in GitHub Discussions — **you own it**, consistent with this blog's "content ownership" philosophy
+- No extra server or database needed; it's a lightweight front-end script that doesn't hurt performance
+- Chinese UI, and readers comment with their GitHub account
+- Automatically follows the blog's dark mode
+
 ## What's Next
 
 1. Keep writing — at least one post per week
 2. Add real portfolio projects
-3. Consider a custom domain and a comments system
+3. Consider a custom domain
 4. Improve Juejin distribution: semi-automate the draft publishing flow
 
 This blog documents my thinking on technology, products, and personal growth. Feel free to stop by.

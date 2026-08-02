@@ -224,6 +224,7 @@ git push origin main
 - **Google Search Console 接入**：已验证域名并提交 sitemap，可监控收录情况
 - **SEO 优化**：Open Graph、Twitter Card、canonical URL、robots.txt
 - **多平台分发（双语）**：每篇文章维护中文版与英文版，通过 GitHub Actions 自动同步——中文版发本站 + 掘金（存草稿），英文版发 Dev.to（直接发布），全部带 canonical URL 指回本站，避免 SEO 重复
+- **评论系统（Giscus）**：基于 GitHub Discussions 的轻量评论系统，免费、无广告、支持中文，评论数据归自己所有
 
 ## 多平台分发架构
 
@@ -258,11 +259,28 @@ git push origin main
 - 用 `curl` 而非 Node `fetch` 发送带 cookie 的请求——`fetch` 对含特殊字符的 Cookie 头处理不可靠
 - 掘金的草稿列表接口不可用，故按**已发布文章**匹配：已发布则更新，否则创建新草稿
 
+## 评论系统（Giscus）
+
+在文章底部接入的 **Giscus** 评论系统，是我对比多个方案后的选择：
+
+| 方案 | 数据归属 | 广告 | 成本 | 中文支持 |
+|------|---------|------|------|---------|
+| **Giscus** | 自己（GitHub Discussions） | 无 | 免费 | ✅ |
+| utterances | 自己（GitHub Issues） | 无 | 免费 | 一般 |
+| Waline/Twikoo | 第三方后端 | 无 | 需维护后端 | ✅ |
+| Disqus | 第三方 | 有 | 免费/付费 | 一般 |
+
+**为什么选 Giscus**：
+- 评论数据存 GitHub Discussions，**归自己所有**，与博客"内容所有权"理念一致
+- 无需额外服务器/数据库，纯前端脚本，轻量不影响性能
+- 支持中文界面，读者用 GitHub 账号即可评论
+- 自动跟随博客的暗色模式
+
 ## 下一步计划
 
 1. 持续写作，每周至少一篇
 2. 补充作品集真实项目
-3. 考虑绑定自定义域名和接入评论系统
+3. 考虑绑定自定义域名
 4. 完善掘金分发：把草稿发布流程半自动化
 
 这个博客会记录我在技术、产品和个人成长方面的思考，欢迎常来看看。
