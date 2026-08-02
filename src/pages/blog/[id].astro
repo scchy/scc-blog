@@ -7,6 +7,7 @@ import PostPreview from '../../components/PostPreview.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 import { slugify } from '../../utils/common-utils';
+import { extractHeadings, estimateReadingTime } from '../../utils/reading-utils';
 
 export async function getStaticPaths() {
     const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
@@ -29,18 +30,25 @@ const { Content } = await render(post);
 
 // Use the configured `site` to generate an absolute URL
 const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+// Reading time & TOC (基于原始 markdown)
+const readingTime = estimateReadingTime(post.body || '');
+const toc = extractHeadings(post.body || '');
 ---
+
 
 <BaseLayout title={seo?.title ?? title} description={seo?.description ?? excerpt} image={seo?.image} pageType={seo?.pageType ?? 'article'} showHeader={false}>
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="font-serif text-3xl leading-tight font-medium sm:text-5xl sm:leading-tight">{title}</h1>
-            <div class="mt-4 text-sm">
+            <div class="mt-4 flex items-center gap-3 text-sm">
                 <FormattedDate date={publishDate} />
+                <span aria-hidden="true">·</span>
+                <span>{readingTime} 分钟阅读</span>
                 {
                     updatedDate && (
                         <>
-                            {' '}
+                            <span aria-hidden="true">·</span>
                             <span>
                                 (Updated on <FormattedDate date={updatedDate} />)
                             </span>
@@ -49,6 +57,20 @@ const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
                 }
             </div>
         </header>
+        {
+            toc.length > 1 && (
+                <nav class="mb-8 rounded-lg border border-dashed p-4" aria-label="Table of contents">
+                    <p class="mb-3 font-serif text-sm font-medium uppercase tracking-wide">目录</p>
+                    <ul class="space-y-1.5 text-sm">
+                        {toc.map((item) => (
+                            <li class:list={[item.level === 3 ? 'pl-4' : '']}>
+                                <a class="text-main hover:underline" href={`#${item.id}`}>{item.text}</a>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            )
+        }
         <div class="prose sm:prose-lg max-w-none">
             <Content />
         </div>
