@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Button from '../../components/Button.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import PostPreview from '../../components/PostPreview.astro';
+import Comments from '../../components/Comments.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 import { slugify } from '../../utils/common-utils';
@@ -100,6 +101,7 @@ const toc = extractHeadings(post.body || '');
             </div>
         )
     }
+    <Comments />
     <Subscribe class="my-16 sm:my-24" />
 </BaseLayout>
 
