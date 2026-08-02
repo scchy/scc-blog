@@ -17,7 +17,8 @@ const seoSchema = (image: ImageFunction) =>
     });
 
 const blog = defineCollection({
-    loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+    // 排除 .en.md 英文版（英文版仅用于 Dev.to 分发，不在本站发布）
+    loader: glob({ pattern: ['**/*.{md,mdx}', '!**/*.en.md'], base: './src/content/blog' }),
     schema: ({ image }) =>
         z.object({
             title: z.string(),

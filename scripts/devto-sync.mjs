@@ -30,13 +30,15 @@ function slugify(text) {
 }
 
 async function api(path, options = {}) {
+    const headers = {
+        'api-key': DEV_API_KEY,
+        ...(options.headers || {})
+    };
+    // 仅在带 body 的请求（POST/PUT）时设置 Content-Type，避免 GET 触发 401
+    if (options.body) headers['Content-Type'] = 'application/json';
     const res = await fetch(`https://dev.to/api${path}`, {
         ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            'api-key': DEV_API_KEY,
-            ...(options.headers || {})
-        }
+        headers
     });
     if (!res.ok) {
         const body = await res.text();
@@ -46,16 +48,12 @@ async function api(path, options = {}) {
 }
 
 // 获取用户所有文章（已发布 + 未发布）
+// 注意：Dev.to 的 /articles/me 接口不接受 page 参数（会返回 401），只支持 per_page
 async function getUserArticles() {
     const articles = [];
     for (const ep of ['/articles/me', '/articles/me/unpublished']) {
-        let page = 1;
-        while (true) {
-            const batch = await api(`${ep}?per_page=100&page=${page}`);
-            if (batch.length === 0) break;
-            articles.push(...batch);
-            page++;
-        }
+        const batch = await api(`${ep}?per_page=100`);
+        articles.push(...batch);
     }
     // 按 canonical_url 去重（同一文章可能同时出现在两个列表）
     const seen = new Set();
@@ -68,8 +66,9 @@ async function getUserArticles() {
 }
 
 async function main() {
-    const files = readdirSync(BLOG_DIR).filter((f) => f.endsWith('.md'));
-    console.log(`📄 发现 ${files.length} 篇文章`);
+    // 只同步英文版（.en.md），中文版（.md）只发本站
+    const files = readdirSync(BLOG_DIR).filter((f) => f.endsWith('.en.md'));
+    console.log(`📄 发现 ${files.length} 篇英文文章（.en.md）`);
 
     const existingArticles = await getUserArticles();
     console.log(`📚 Dev.to 现有 ${existingArticles.length} 篇文章`);
@@ -77,8 +76,8 @@ async function main() {
     for (const file of files) {
         const raw = readFileSync(join(BLOG_DIR, file), 'utf-8');
         const { data, content } = matter(raw);
-        // 用文件名作为 slug（与博客 URL 一致）
-        const slug = data.slug || file.replace(/\.md$/, '');
+        // 用文件名作为 slug（去掉 .en.md，与博客中文版 URL 一致）
+        const slug = data.slug || file.replace(/\.en\.md$/, '');
         // Dev.to tag 规则：只能纯小写字母/数字（a-z0-9），去掉空格、连字符等所有特殊字符
         const tags = (data.tags || [])
             .map((t) => t.toLowerCase().replace(/[^a-z0-9]/g, ''))
