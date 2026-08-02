@@ -70,7 +70,7 @@ const siteConfig: SiteConfig = {
         text: "我是 **SCC**，一名开发者。\n这个博客记录我在技术、产品和个人成长方面的思考。\n\n内容首发于此，同步分发到 Dev.to 与掘金，欢迎常来看看。",
         image: {
             src: hero,
-            alt: '代码工作台'
+            alt: 'SCC 的羊毛毡头像'
         },
         actions: [
             {
