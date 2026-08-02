@@ -83,7 +83,7 @@ Several Astro features make it especially well-suited for blogging:
 ### Step 1: Initialize the Astro project
 
 ```bash
-cd /home/scc/sccWork/devData/sccDisk/openClaw/gitProj
+# In your project directory
 npm create astro@latest scc-blog -- --template blog --no-install
 cd scc-blog
 npm install
@@ -222,12 +222,47 @@ After the initial build, the blog went through several more iterations. Current 
 - **RSS & Sitemap**: auto-generated RSS feed and site map
 - **Google Search Console**: verified the domain and submitted the sitemap, with indexing monitoring
 - **SEO optimization**: Open Graph, Twitter Card, canonical URL, robots.txt
+- **Multi-platform distribution (bilingual)**: every post is maintained in both Chinese and English, auto-synced via GitHub Actions — Chinese goes to this site + Juejin (as draft), English goes to Dev.to (published directly), all with canonical URLs pointing back here to avoid SEO duplication
+
+## Multi-Platform Distribution Architecture
+
+Content follows the **"self-hosted home base + community distribution"** dual-track strategy, partially automated through GitHub Actions:
+
+```
+        ┌──────────────────────────────────────────────┐
+        │           src/content/blog/                   │
+        │  first-post.md (Chinese)  first-post.en.md (English) │
+        └──────────────────────────────────────────────┘
+                          │ git push
+                          ▼
+              ┌───────────────────────┐
+              │   GitHub Actions       │
+              └───────────────────────┘
+            ┌───────────┼───────────┐
+            ▼           ▼           ▼
+      ┌──────────┐ ┌─────────┐ ┌─────────┐
+      │ This site │ │ Juejin  │ │ Dev.to  │
+      │ (Chinese) │ │(Chinese)│ │(English)│
+      │ auto-deploy│ │ draft   │ │ published│
+      └──────────┘ └─────────┘ └─────────┘
+          all with canonical_url pointing back here
+```
+
+**Distribution rules**:
+- **This site**: deploys the Chinese version (`.md`); the English version (`.en.md`) is excluded from the content collection so it doesn't generate a page
+- **Juejin**: syncs the Chinese version (`.md`) as a **draft**, published manually by the author in the backend (avoids platform risk-control against AI-batch-published content)
+- **Dev.to**: syncs the English version (`.en.md`) and **publishes it directly** (Dev.to has an official API, fully automated)
+
+**Key technical points**:
+- Juejin has no official public API; it's accessed via its web `api.juejin.cn` endpoints + login cookie (same source as community MCP solutions)
+- Use `curl` instead of Node `fetch` for cookie-bearing requests — `fetch` handles cookies with special characters unreliably
+- Juejin's draft-list endpoint is unavailable, so matching is done against **published articles**: update if published, otherwise create a new draft
 
 ## What's Next
 
 1. Keep writing — at least one post per week
-2. Sync to Dev.to and Juejin with canonical URLs
-3. Add real portfolio projects
-4. Consider a custom domain and a comments system
+2. Add real portfolio projects
+3. Consider a custom domain and a comments system
+4. Improve Juejin distribution: semi-automate the draft publishing flow
 
 This blog documents my thinking on technology, products, and personal growth. Feel free to stop by.

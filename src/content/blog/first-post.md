@@ -84,7 +84,7 @@ Astro 的几个特性特别适合博客：
 ### 第 1 步：初始化 Astro 项目
 
 ```bash
-cd /home/scc/sccWork/devData/sccDisk/openClaw/gitProj
+# 在你的项目目录下初始化
 npm create astro@latest scc-blog -- --template blog --no-install
 cd scc-blog
 npm install
@@ -223,12 +223,46 @@ git push origin main
 - **RSS & Sitemap**：自动生成 RSS 订阅源和站点地图
 - **Google Search Console 接入**：已验证域名并提交 sitemap，可监控收录情况
 - **SEO 优化**：Open Graph、Twitter Card、canonical URL、robots.txt
+- **多平台分发（双语）**：每篇文章维护中文版与英文版，通过 GitHub Actions 自动同步——中文版发本站 + 掘金（存草稿），英文版发 Dev.to（直接发布），全部带 canonical URL 指回本站，避免 SEO 重复
+
+## 多平台分发架构
+
+内容采用**「自托管主阵地 + 社区分发」**的双轨策略，通过 GitHub Actions 实现半自动分发：
+
+```
+        ┌──────────────────────────────────────────────┐
+        │           src/content/blog/                   │
+        │   first-post.md（中文版）  first-post.en.md（英文版）│
+        └──────────────────────────────────────────────┘
+                          │ git push
+                          ▼
+              ┌───────────────────────┐
+              │   GitHub Actions       │
+              └───────────────────────┘
+            ┌───────────┼───────────┐
+            ▼           ▼           ▼
+      ┌──────────┐ ┌─────────┐ ┌─────────┐
+      │ 本站(中文) │ │ 掘金(中文)│ │Dev.to(英)│
+      │ 自动部署   │ │ 存草稿   │ │ 直接发布 │
+      └──────────┘ └─────────┘ └─────────┘
+         全部带 canonical_url 指回本站
+```
+
+**分发规则**：
+- **本站**：部署中文版（`.md`），英文版（`.en.md`）通过 content collection 排除，不生成页面
+- **掘金**：同步中文版（`.md`）为**草稿**，由作者在后台手动发布（规避平台对批量发布的 AI 内容风控）
+- **Dev.to**：同步英文版（`.en.md`）并**直接发布**（Dev.to 有官方 API，支持全自动）
+
+**关键技术点**：
+- 掘金无官方公开 API，通过其网页端 `api.juejin.cn` 接口 + 登录 cookie 实现（与社区 MCP 方案同源）
+- 用 `curl` 而非 Node `fetch` 发送带 cookie 的请求——`fetch` 对含特殊字符的 Cookie 头处理不可靠
+- 掘金的草稿列表接口不可用，故按**已发布文章**匹配：已发布则更新，否则创建新草稿
 
 ## 下一步计划
 
 1. 持续写作，每周至少一篇
-2. 同步到 Dev.to 和掘金，并加上 canonical URL
-3. 补充作品集真实项目
-4. 考虑绑定自定义域名和接入评论系统
+2. 补充作品集真实项目
+3. 考虑绑定自定义域名和接入评论系统
+4. 完善掘金分发：把草稿发布流程半自动化
 
 这个博客会记录我在技术、产品和个人成长方面的思考，欢迎常来看看。
