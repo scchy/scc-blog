@@ -1,6 +1,6 @@
 ---
 title: 我的个人知识管理闭环：Obsidian + Blog + DeepTutor 三件套
-excerpt: 我把「收集 → 加工 → 输出 → 复盘」串成一个可持续运转的闭环：Obsidian 沉淀、Blog 输出、DeepTutor 复盘辅导。分享这套体系的架构、落地细节和踩过的坑。
+excerpt: "我把「收集 → 加工 → 输出 → 复盘」串成一个可持续运转的闭环：Obsidian 沉淀、Blog 输出、DeepTutor 复盘辅导。分享这套体系的架构、落地细节和踩过的坑。"
 publishDate: 2026-08-06
 isFeatured: false
 tags:

@@ -1,6 +1,6 @@
 ---
 title: "My Personal Knowledge Management Loop: Obsidian + Blog + DeepTutor"
-excerpt: I strung collect, process, output, and review into a sustainable loop: Obsidian for processing, Blog for output, and DeepTutor for review and tutoring. Here's the architecture, implementation details, and pitfalls I hit.
+excerpt: "I strung collect, process, output, and review into a sustainable loop: Obsidian for processing, Blog for output, and DeepTutor for review and tutoring. Here's the architecture, implementation details, and pitfalls I hit."
 publishDate: 2026-08-06
 isFeatured: false
 tags:
