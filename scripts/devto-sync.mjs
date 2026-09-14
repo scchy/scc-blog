@@ -36,7 +36,7 @@ async function api(path, options = {}) {
     };
     // 仅在带 body 的请求（POST/PUT）时设置 Content-Type，避免 GET 触发 401
     if (options.body) headers['Content-Type'] = 'application/json';
-    const res = await fetch(`https://dev.to/api${path}`, {
+    const res = await fetchWithRetry(`https://dev.to/api${path}`, {
         ...options,
         headers
     });
@@ -45,6 +45,18 @@ async function api(path, options = {}) {
         throw new Error(`Dev.to API ${res.status}: ${body}`);
     }
     return res.json();
+}
+
+// 带 429 退避重试的 fetch（最多 5 次，指数退避 5s/10s/20s/40s/80s）
+async function fetchWithRetry(url, options, attempt = 1) {
+    const res = await fetch(url, options);
+    if (res.status === 429 && attempt < 5) {
+        const wait = 5 * 2 ** (attempt - 1);
+        console.warn(`⏳ Dev.to 429 限流，${wait}s 后重试（第 ${attempt}/4 次）…`);
+        await new Promise((r) => setTimeout(r, wait * 1000));
+        return fetchWithRetry(url, options, attempt + 1);
+    }
+    return res;
 }
 
 // 获取用户所有文章（已发布 + 未发布）
