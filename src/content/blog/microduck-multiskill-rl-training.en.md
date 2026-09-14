@@ -1,6 +1,6 @@
 ---
 title: "14 Robot Skills in 5 Days on a Single GPU: Queued RL Training for a Bipedal Robot Duck"
-excerpt: Training a 14-skill policy library for MicroDuck, a bipedal robot duck (15× XL330 servos, 50Hz), with mjlab (MuJoCo Warp) + PPO on a single GPU: serial training queues, OOM downgrade-and-retry, NaN-safe patches, and a different reward-design philosophy per skill. All skill rollout GIFs included.
+excerpt: "Training a 14-skill policy library for MicroDuck, a bipedal robot duck (15× XL330 servos, 50Hz), with mjlab (MuJoCo Warp) + PPO on a single GPU — serial training queues, OOM downgrade-and-retry, NaN-safe patches, and a different reward-design philosophy per skill. All skill rollout GIFs included."
 publishDate: 2026-09-14
 isFeatured: false
 tags:
